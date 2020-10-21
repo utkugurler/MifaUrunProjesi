@@ -12,6 +12,7 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
 
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
@@ -22,30 +23,33 @@
         <thead>
             <tr>
                 <th scope="col">ID</th>
-                <th scope="col">Hammadde</th>
-                <th scope="col">Stok</th>
+                <th scope="col">Urun</th>
+                <th scope="col">Miktar</th>
                 <th scope="col">Düzenle</th>
+
             </tr>
         </thead>
+
         <tbody>
+
             @{
                 foreach (var item in ViewBag.urunler)
                 {
-                    <tr>
 
-                        <th scope="row">@item.Id</th>
-                        <td>@item.Urun</td>
-                        <td>@item.Miktar</td>
+                    <tr>
+                        <th scope="row" id="btnId">@item.Id</th>
+                        <td>@item.Hammadde</td>
+                        <td>@item.Stok</td>
                         <td>
-                            <form>
-                                <input type="submit" value="Düzenle" />
-                                <input type="submit" value="Sil" />
-                            </form>
+                            <button onclick="location.href = 'Hammaddeler/UrunDuzenle?id=@item.Id';" type="submit" id="btnEdit" class="btn btn-primary">Düzenle</button>
                         </td>
                     </tr>
+
                 }
+
             }
         </tbody>
     </table>
+
 </body>
 </html>

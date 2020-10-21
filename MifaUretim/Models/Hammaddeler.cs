@@ -10,9 +10,11 @@ namespace MifaUretim.Models
 		private int id;
 		private string hammadde;
 		private int stok;
+		private string hammaddekod;
 
 		public int Id { get => id; set => id = value; }
 		public string Hammadde { get => hammadde; set => hammadde = value; }
 		public int Stok { get => stok; set => stok = value; }
+		public string HammaddeKod { get => hammaddekod; set => hammaddekod = value; }
 	}
 }

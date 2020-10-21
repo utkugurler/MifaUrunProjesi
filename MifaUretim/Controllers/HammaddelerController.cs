@@ -42,6 +42,7 @@ namespace MifaUretim.Controllers
                 hammaddeler1.Id = Convert.ToInt32(dataReader["id"]);
                 hammaddeler1.Hammadde = dataReader["Hammadde"].ToString();
                 hammaddeler1.Stok = Convert.ToInt32(dataReader["Stok"]);
+                hammaddeler1.HammaddeKod = dataReader["HammaddeKod"].ToString();
                 hammaddeler.Add(hammaddeler1);
             }
             dataReader.Close();
@@ -50,24 +51,50 @@ namespace MifaUretim.Controllers
             return hammaddeler;
         }
 
-        [HttpGet("{id}")]
-        public IActionResult HammaddeDuzenle()
+        [HttpGet]
+        public IActionResult HammaddeDuzenle(int id)
 		{
+            Hammaddeler hammaddeler = new Hammaddeler();
             if(con.State != System.Data.ConnectionState.Open)
 			{
                 con.Open();
 			}
 
-            SqlCommand cmd = new SqlCommand($"", con);
-            cmd.ExecuteNonQuery();
+            SqlCommand cmd = new SqlCommand($"select * from Hammaddeler where id = '{id}'", con);
+            SqlDataReader dataReader = cmd.ExecuteReader();
+			if (dataReader.Read())
+			{
+                hammaddeler.Id = Convert.ToInt32(dataReader["id"]);
+                hammaddeler.Hammadde = dataReader["Hammadde"].ToString();
+                hammaddeler.Stok = Convert.ToInt32(dataReader["Stok"]);
+                hammaddeler.HammaddeKod = dataReader["HammaddeKod"].ToString();
+            }
+            ViewBag.hammaddeler = hammaddeler;
+
+            con.Close();
+            dataReader.Close();
             return View();
 		}
 
         [HttpPost]
         public IActionResult HammaddeDuzenle(Hammaddeler hammaddeler)
 		{
-            return View();
-		}
+            if (hammaddeler.Hammadde == null)
+			{
+
+			}
+			else
+			{
+                if (con.State != System.Data.ConnectionState.Open)
+                {
+                    con.Open();
+                }
+                SqlCommand cmd = new SqlCommand($"update Hammaddeler set Hammadde='{hammaddeler.Hammadde}', Stok='{hammaddeler.Stok}', HammaddeKod='{hammaddeler.HammaddeKod}' where id = '{hammaddeler.Id}'", con);
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
+            return RedirectToAction("Index");
+        }
 
         public IActionResult YeniHammadde()
 		{
@@ -82,7 +109,7 @@ namespace MifaUretim.Controllers
                 con.Open();
             }
 
-            SqlCommand cmd = new SqlCommand($"insert into Hammaddeler(Hammadde, Stok) values('{hammaddeler.Hammadde}', '{hammaddeler.Stok}')", con);
+            SqlCommand cmd = new SqlCommand($"insert into Hammaddeler(Hammadde, Stok, HammaddeKod) values('{hammaddeler.Hammadde}', '{hammaddeler.Stok}', '{hammaddeler.HammaddeKod}')", con);
             cmd.ExecuteNonQuery();
             con.Close();
             return View();
