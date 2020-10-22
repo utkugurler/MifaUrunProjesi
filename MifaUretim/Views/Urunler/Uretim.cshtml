@@ -1,0 +1,94 @@
+﻿@model IEnumerable<MifaUretim.Models.Urunler>
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <meta name="viewport" content="width=device-width" />
+    <title>ÜRETİM</title>
+</head>
+<body>
+  
+    @{
+        foreach (var item in ViewBag.urunler.UrunKodlari)
+        {
+            <div class="form-group">
+                <div class="col-lg-9">
+                    <div class="form-inline">
+                        <div class="form-group ">
+                            <div class="col-lg-12">
+                                <label class="sr-only" for="city">Hammadde</label>
+                                <input type="text" id="city" name="city" class="form-control " value="@item.hammaddeAdi" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <div class="col-lg-12">
+                                <label class="sr-only" for="county">Miktar</label>
+                                <input type="text" id="county" name="county" class="form-control " value="@item.quantity" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    <div class="form-group">
+        <div class="col-lg-9">
+            <div class="form-inline">
+                <div class="form-group ">
+                    <div class="col-lg-12">
+                        <input type="number" id="quantity" name="county" class="form-control" value="1">
+                    </div>
+                </div>
+                <div class="form-group ">
+                    <div class="col-lg-12">
+                        <input type="button" class="btn btn-success" value="Üret" id="btnsubmit">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</body>
+</html>
+
+@section Scripts
+{
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnsubmit").click(function (e) {
+                //Serialize the form datas.
+                //to get alert popup
+                var uretim = {
+                    urunQuantity: $("#quantity").val(),
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/Urunler/Uretim",
+                    data: uretim,
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.responseText);
+                        } else {
+                            // DoSomethingElse()
+                            alert(response.responseText);
+                        }
+                    },
+                    error: function (response) {
+                        alert(response.responseText);  // 
+                    }
+                });
+            });
+        });
+    </script>
+}
