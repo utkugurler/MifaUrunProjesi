@@ -47,6 +47,51 @@ namespace MifaUretim.Controllers
 			return urunler;
 		}
 
+		public IActionResult UrunYarat()
+		{
+			// İlk önce hammaddeleri çekiyoruz
+			if(con.State != System.Data.ConnectionState.Open)
+			{
+				con.Open();
+			}
+
+			List<Hammaddeler> hammaddelers = new List<Hammaddeler>();
+
+			SqlCommand cmd = new SqlCommand("select Hammadde, id from Hammaddeler", con);
+			SqlDataReader dataReader = cmd.ExecuteReader();
+			
+			while (dataReader.Read())
+			{
+				Hammaddeler hammaddeler = new Hammaddeler();
+				hammaddeler.Hammadde = dataReader["Hammadde"].ToString();
+				hammaddeler.Id = Convert.ToInt32(dataReader["id"]);
+				hammaddelers.Add(hammaddeler);
+			}
+			dataReader.Close();
+			con.Close();
+
+			ViewBag.hammaddeler = hammaddelers;
+			return View();
+		}
+
+		[HttpPost]
+		public IActionResult UrunYarat(Urunler urunler)
+		{
+			if (con.State != System.Data.ConnectionState.Open)
+			{
+				con.Open();
+			}
+
+			// UrunKodlarını yeniden jsona çeviricez
+			string jsonString = JsonConvert.SerializeObject(urunler.UrunKodlari);
+
+			SqlCommand cmd = new SqlCommand($"insert into Urunler(Urun, Miktar, UrunKodlari) values('{urunler.Urun}', '0', '{jsonString}')", con);
+			cmd.ExecuteNonQuery();
+
+			con.Close();
+			return View();
+		}
+
 		public static Urunler urunler = new Urunler();
 		static int urunId;
 		[HttpGet]
@@ -75,11 +120,12 @@ namespace MifaUretim.Controllers
 			// UrunKodlarindaki idleri isimlerle eşleştiricem
 			foreach (var item in urunler.UrunKodlari)
 			{
-				SqlCommand sqlCommand = new SqlCommand($"select Hammadde from Hammaddeler where id = '{item.id}'", con);
+				SqlCommand sqlCommand = new SqlCommand($"select Hammadde, Stok from Hammaddeler where id = '{item.id}'", con);
 				SqlDataReader dataReader1 = sqlCommand.ExecuteReader();
 				if (dataReader1.Read())
 				{
 					urunler.UrunKodlari[count].hammaddeAdi = dataReader1["Hammadde"].ToString();
+					urunler.UrunKodlari[count].envanterToplami = Convert.ToInt32(dataReader1["Stok"].ToString());
 				}
 				count++;
 			}
@@ -133,6 +179,7 @@ namespace MifaUretim.Controllers
 				}
 				dataReader.Close();
 			}
+			//List<int> envanterStok = new List<int>();
 
 			if (flag == true)
 			{
@@ -145,8 +192,9 @@ namespace MifaUretim.Controllers
 					SqlDataReader dataReader = cmd.ExecuteReader();
 					if (dataReader.Read())
 					{
-						int a = Convert.ToInt32(dataReader["Stok"]);
+						//envanterStok.Add(Convert.ToInt32(dataReader["Stok"]));
 						
+
 						SqlCommand cmd2 = new SqlCommand($"update Hammaddeler set Stok = Stok - {q} where id = '{item.id}'", con);
 						cmd2.ExecuteNonQuery();
 						
@@ -167,7 +215,6 @@ namespace MifaUretim.Controllers
 				//ViewBag.Message = "Yeterli Hammadden Yok!";
 				//return View();
 			}
-			
 		}
 	}
 
@@ -178,5 +225,7 @@ namespace MifaUretim.Controllers
 		public int quantity { get; set; }
 
 		public string hammaddeAdi { get; set; }
+
+		public int envanterToplami { get; set; }
 	}
 }

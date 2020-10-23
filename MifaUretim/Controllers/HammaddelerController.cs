@@ -96,6 +96,19 @@ namespace MifaUretim.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
+        public IActionResult HammaddeDelete(int id)
+		{
+            if(con.State != System.Data.ConnectionState.Open)
+			{
+                con.Open();
+			}
+
+            SqlCommand cmd = new SqlCommand($"delete from Hammaddeler where id = '{id}'" ,con);
+            cmd.ExecuteNonQuery();
+            return RedirectToAction("Hammaddeler");
+		}
+
         public IActionResult YeniHammadde()
 		{
             return View();
