@@ -33,12 +33,6 @@
             </div>
         </div>
         <div class="form-group row">
-            <label for="inputEmail3" class="col-sm-2 col-form-label">Hammadde Kodu</label>
-            <div class="col-sm-10">
-                <input readonly type="number" class="form-control" id="HammaddeKod" placeholder="Hammadde Kodu" value="@ViewBag.hammaddeler.HammaddeKod" />
-            </div>
-        </div>
-        <div class="form-group row">
             <div class="col-sm-1">
                 <input type="submit" class="btn btn-primary" value="Kaydet" id="btnsubmit" />
             </div>
@@ -65,7 +59,6 @@
                     Id: $("#HammaddeId").val(),
                     Hammadde: $("#HammaddeAdi").val(),
                     Stok: $("#HammaddeStok").val(),
-                    HammaddeKod: $("#HammaddeKod").val(),
                 }
                 $.ajax({
                     type: "POST",

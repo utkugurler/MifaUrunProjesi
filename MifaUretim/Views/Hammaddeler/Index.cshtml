@@ -17,7 +17,7 @@
     <title>Index</title>
 </head>
 <body>
-    <a href="Hammaddeler/YeniHammadde" class="btn btn-success btn-lg float-lg-right">Hammadde Yarat</a>
+    <a href="/Hammaddeler/YeniHammadde" class="btn btn-success btn-lg float-lg-right">Hammadde Yarat</a>
 
     <table class="table table-striped">
         <thead>
@@ -25,7 +25,6 @@
                 <th scope="col">ID</th>
                 <th scope="col">Hammadde</th>
                 <th scope="col">Stok</th>
-                <th scope="col">Hammadde Kodu</th>
                 <th scope="col">Düzenle</th>
 
             </tr>
@@ -41,7 +40,6 @@
                         <th scope="row" id="btnId">@item.Id</th>
                         <td>@item.Hammadde</td>
                         <td>@item.Stok</td>
-                        <td>@item.HammaddeKod</td>
                         <td>
                             <button onclick="location.href = '/Hammaddeler/HammaddeDuzenle?id=@item.Id';" type="submit" id="btnEdit" class="btn btn-primary">Düzenle</button>
                         </td>
