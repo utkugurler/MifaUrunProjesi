@@ -17,40 +17,41 @@
     <title>Index</title>
 </head>
 <body>
+    <a href="Hammaddeler/YeniHammadde" class="btn btn-success btn-lg float-lg-right">Hammadde Yarat</a>
 
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Hammadde</th>
-                    <th scope="col">Stok</th>
-                    <th scope="col">Hammadde Kodu</th>
-                    <th scope="col">Düzenle</th>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Hammadde</th>
+                <th scope="col">Stok</th>
+                <th scope="col">Hammadde Kodu</th>
+                <th scope="col">Düzenle</th>
 
-                </tr>
-            </thead>
+            </tr>
+        </thead>
 
-            <tbody>
+        <tbody>
 
-                @{
-                    foreach (var item in ViewBag.hammaddeler)
-                    {
+            @{
+                foreach (var item in ViewBag.hammaddeler)
+                {
 
-                        <tr>
-                            <th scope="row" id="btnId">@item.Id</th>
-                            <td>@item.Hammadde</td>
-                            <td>@item.Stok</td>
-                            <td>@item.HammaddeKod</td>
-                            <td>
-                                <button onclick="location.href = '/Hammaddeler/HammaddeDuzenle?id=@item.Id';" type="submit" id="btnEdit" class="btn btn-primary">Düzenle</button>
-                            </td>
-                        </tr>
-
-                    }
+                    <tr>
+                        <th scope="row" id="btnId">@item.Id</th>
+                        <td>@item.Hammadde</td>
+                        <td>@item.Stok</td>
+                        <td>@item.HammaddeKod</td>
+                        <td>
+                            <button onclick="location.href = '/Hammaddeler/HammaddeDuzenle?id=@item.Id';" type="submit" id="btnEdit" class="btn btn-primary">Düzenle</button>
+                        </td>
+                    </tr>
 
                 }
-            </tbody>
-        </table>
+
+            }
+        </tbody>
+    </table>
 
 </body>
 </html>

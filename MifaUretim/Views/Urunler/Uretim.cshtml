@@ -30,7 +30,7 @@
                             <div class="form-group ">
                                 <div class="col-lg-12">
                                     Miktar:
-                                    <input type="text" id="quantity" name="county" class="form-control " value="@item.quantity" readonly>
+                                    <input type="text" id="hammmaddeQuantity" name="hammmaddeQuantity" class="form-control " value="@item.quantity" readonly>
                                 </div>
                             </div>
                             <div class="form-group ">
@@ -62,13 +62,17 @@
     </div>
 
     <div class="form-group">
-        <div class="form-group ">
-            <button onclick="location.href = 'UrunSil?id=@ViewBag.urunler.Id';" class="btn btn-danger" value="Sil" id="btndelete">Sil</button>
-
-            <button onclick="location.href = 'Index';" class="btn btn-warning" value="Geri" id="btnback">Geri Dön</button>
-        </div>
-        
-    </div>
+        <div class="col-lg-9">
+            <div class="form-inline">
+                @*<button onclick="location.href = 'UrunSil?id=@ViewBag.urunler.Id';" class="btn btn-danger" value="Sil" id="btndelete">Sil</button>*@
+                <div class="form-group ">
+                    <div class="col-lg-12">
+                        <button onclick="location.href = 'Index';" class="btn btn-warning" value="Geri" id="btnback">Geri Dön</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
 
 </body>
 </html>
@@ -82,12 +86,17 @@
                 //Serialize the form datas.
                 //to get alert popup
                 var uretim = {
-                    urunQuantity: $("#quantity").val(),
+                    urunQuantity: $("#hammmaddeQuantity").val(),
                 }
+
+                var quantity = $("#quantity").val();
+
+                console.log(uretim);
+
                 $.ajax({
                     type: "POST",
                     url: "/Urunler/Uretim",
-                    data: uretim,
+                    data: { urunQuantity: quantity },
                     dataType: "json",
                     success: function (response) {
                         if (response.success) {

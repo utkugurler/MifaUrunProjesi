@@ -42,7 +42,6 @@ namespace MifaUretim.Controllers
                 hammaddeler1.Id = Convert.ToInt32(dataReader["id"]);
                 hammaddeler1.Hammadde = dataReader["Hammadde"].ToString();
                 hammaddeler1.Stok = Convert.ToInt32(dataReader["Stok"]);
-                hammaddeler1.HammaddeKod = dataReader["HammaddeKod"].ToString();
                 hammaddeler.Add(hammaddeler1);
             }
             dataReader.Close();
@@ -67,7 +66,6 @@ namespace MifaUretim.Controllers
                 hammaddeler.Id = Convert.ToInt32(dataReader["id"]);
                 hammaddeler.Hammadde = dataReader["Hammadde"].ToString();
                 hammaddeler.Stok = Convert.ToInt32(dataReader["Stok"]);
-                hammaddeler.HammaddeKod = dataReader["HammaddeKod"].ToString();
             }
             ViewBag.hammaddeler = hammaddeler;
 
@@ -89,7 +87,7 @@ namespace MifaUretim.Controllers
                 {
                     con.Open();
                 }
-                SqlCommand cmd = new SqlCommand($"update Hammaddeler set Hammadde='{hammaddeler.Hammadde}', Stok='{hammaddeler.Stok}', HammaddeKod='{hammaddeler.HammaddeKod}' where id = '{hammaddeler.Id}'", con);
+                SqlCommand cmd = new SqlCommand($"update Hammaddeler set Hammadde='{hammaddeler.Hammadde}', Stok='{hammaddeler.Stok}' where id = '{hammaddeler.Id}'", con);
                 cmd.ExecuteNonQuery();
                 con.Close();
             }
@@ -106,7 +104,7 @@ namespace MifaUretim.Controllers
 
             SqlCommand cmd = new SqlCommand($"delete from Hammaddeler where id = '{id}'" ,con);
             cmd.ExecuteNonQuery();
-            return RedirectToAction("Hammaddeler");
+            return RedirectToAction("Index");
 		}
 
         public IActionResult YeniHammadde()
@@ -122,7 +120,7 @@ namespace MifaUretim.Controllers
                 con.Open();
             }
 
-            SqlCommand cmd = new SqlCommand($"insert into Hammaddeler(Hammadde, Stok, HammaddeKod) values('{hammaddeler.Hammadde}', '{hammaddeler.Stok}', '{hammaddeler.HammaddeKod}')", con);
+            SqlCommand cmd = new SqlCommand($"insert into Hammaddeler(Hammadde, Stok) values('{hammaddeler.Hammadde}', '{hammaddeler.Stok}')", con);
             cmd.ExecuteNonQuery();
             con.Close();
             return View();

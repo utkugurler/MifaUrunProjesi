@@ -92,8 +92,97 @@ namespace MifaUretim.Controllers
 			return View();
 		}
 
+		public IActionResult UrunSil(int id)
+		{
+			if (con.State != System.Data.ConnectionState.Open)
+			{
+				con.Open();
+			}
+
+			SqlCommand cmd = new SqlCommand($"delete from Urunler where id = '{id}'", con);
+			cmd.ExecuteNonQuery();
+			return RedirectToAction("Index");
+		}
+
 		public static Urunler urunler = new Urunler();
 		static int urunId;
+
+		[HttpGet]
+		public IActionResult UrunDuzenle(int id)
+		{
+			urunId = id;
+			if (con.State != System.Data.ConnectionState.Open)
+			{
+				con.Open();
+			}
+
+			SqlCommand cmd = new SqlCommand($"select * from Urunler where id = '{id}'", con);
+			SqlDataReader dataReader = cmd.ExecuteReader();
+
+			Urunler urunler = new Urunler();
+			if (dataReader.Read())
+			{
+				urunler.Urun = dataReader["Urun"].ToString();
+				urunler.Id = id;
+				urunler.Miktar = Convert.ToInt32(dataReader["Miktar"]);
+				urunler.UrunKodlari = urunler.UrunKodlari = JsonConvert.DeserializeObject<List<UrunKodlari>>(dataReader["UrunKodlari"].ToString());
+			}
+			dataReader.Close();
+
+			int count = 0;
+			// UrunKodlarindaki idleri isimlerle eşleştiricem
+			foreach (var item in urunler.UrunKodlari)
+			{
+				SqlCommand sqlCommand = new SqlCommand($"select Hammadde, Stok from Hammaddeler where id = '{item.id}'", con);
+				SqlDataReader dataReader1 = sqlCommand.ExecuteReader();
+				if (dataReader1.Read())
+				{
+					urunler.UrunKodlari[count].hammaddeAdi = dataReader1["Hammadde"].ToString();
+					urunler.UrunKodlari[count].envanterToplami = Convert.ToInt32(dataReader1["Stok"].ToString());
+				}
+				dataReader1.Close();
+				count++;
+			}
+
+			List<Hammaddeler> hammaddeler = new List<Hammaddeler>();
+			SqlCommand cmd2 = new SqlCommand($"select Hammadde, id from Hammaddeler", con);
+			SqlDataReader sqlDataReader = cmd2.ExecuteReader();
+			while (sqlDataReader.Read())
+			{
+				Hammaddeler hammaddeler1 = new Hammaddeler();
+				hammaddeler1.Hammadde = sqlDataReader["Hammadde"].ToString();
+				hammaddeler1.Id = Convert.ToInt32(sqlDataReader["id"]);
+				hammaddeler.Add(hammaddeler1);
+			}
+			sqlDataReader.Close();
+			con.Close();
+
+			ViewBag.hammaddeler = hammaddeler;
+			ViewBag.urunler = urunler;
+
+
+			return View();
+		}
+
+		[HttpPost]
+		public IActionResult UrunDuzenle(Urunler urunler)
+		{
+			if (con.State != System.Data.ConnectionState.Open)
+			{
+				con.Open();
+			}
+
+			// UrunKodlarını yeniden jsona çeviricez
+			string jsonString = JsonConvert.SerializeObject(urunler.UrunKodlari);
+
+			SqlCommand cmd = new SqlCommand($"update Urunler set Urun='{urunler.Urun}', UrunKodlari='{jsonString}' where id='{urunId}'", con);
+			cmd.ExecuteNonQuery();
+
+			con.Close();
+
+			return View();
+		}
+
 		[HttpGet]
 		public IActionResult Uretim(int id)
 		{
@@ -147,7 +236,7 @@ namespace MifaUretim.Controllers
 		}
 
 		[HttpPost]
-		public JsonResult Uretim(Uretim uretim)
+		public JsonResult Uretim(Uretim uretim, int urunQuantity)
 		{
 			// Viewbagden ürünlerin idlerinden dbde kontrol yapacak yeterlimi diye yeterliyse üretecek ve hammadden o miktar kadar kesecek
 
@@ -159,7 +248,7 @@ namespace MifaUretim.Controllers
 			bool flag = false;
 			foreach (var item in urunler.UrunKodlari)
 			{
-				int q = item.quantity * uretim.UrunQuantity;
+				int q = item.quantity * urunQuantity;
 				SqlCommand cmd = new SqlCommand($"select Stok from Hammaddeler where id = {item.id}", con);
 				//var ex = cmd.ExecuteScalar();
 
@@ -179,13 +268,12 @@ namespace MifaUretim.Controllers
 				}
 				dataReader.Close();
 			}
-			//List<int> envanterStok = new List<int>();
 
 			if (flag == true)
 			{
 				foreach (var item in urunler.UrunKodlari)
 				{
-					int q = item.quantity * uretim.UrunQuantity;
+					int q = item.quantity * urunQuantity;
 					SqlCommand cmd = new SqlCommand($"select Stok from Hammaddeler where id = {item.id}", con);
 					//var ex = cmd.ExecuteScalar();
 
@@ -202,7 +290,7 @@ namespace MifaUretim.Controllers
 					dataReader.Close();
 				}
 
-				SqlCommand cmd3 = new SqlCommand($"update Urunler set Miktar = Miktar + {uretim.UrunQuantity} where id='{urunId}'", con);
+				SqlCommand cmd3 = new SqlCommand($"update Urunler set Miktar = Miktar + {urunQuantity} where id='{urunId}'", con);
 				cmd3.ExecuteNonQuery();
 				con.Close();
 				return Json(new { success = true, responseText = "Ürün başarılı bir şekilde oluşturuldu!" });
