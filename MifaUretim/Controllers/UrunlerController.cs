@@ -75,7 +75,7 @@ namespace MifaUretim.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult UrunYarat(Urunler urunler)
+		public JsonResult UrunYarat(Urunler urunler)
 		{
 			if (con.State != System.Data.ConnectionState.Open)
 			{
@@ -85,11 +85,20 @@ namespace MifaUretim.Controllers
 			// UrunKodlarını yeniden jsona çeviricez
 			string jsonString = JsonConvert.SerializeObject(urunler.UrunKodlari);
 
-			SqlCommand cmd = new SqlCommand($"insert into Urunler(Urun, Miktar, UrunKodlari) values('{urunler.Urun}', '0', '{jsonString}')", con);
-			cmd.ExecuteNonQuery();
+			try
+			{
+				SqlCommand cmd = new SqlCommand($"insert into Urunler(Urun, Miktar, UrunKodlari) values('{urunler.Urun}', '0', '{jsonString}')", con);
+				cmd.ExecuteNonQuery();
+			}
+			catch(Exception ex)
+			{
+				con.Close();
+				return Json(new { success = false, responseText = "Ürün oluşturulurken bir hata meydana geldi!" });
+			}
+
 
 			con.Close();
-			return View();
+			return Json(new { success = true, responseText = "Ürün başarılı bir şekilde oluşturuldu!" });
 		}
 
 		public IActionResult UrunSil(int id)
@@ -165,7 +174,7 @@ namespace MifaUretim.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult UrunDuzenle(Urunler urunler)
+		public JsonResult UrunDuzenle(Urunler urunler)
 		{
 			if (con.State != System.Data.ConnectionState.Open)
 			{
@@ -175,12 +184,18 @@ namespace MifaUretim.Controllers
 			// UrunKodlarını yeniden jsona çeviricez
 			string jsonString = JsonConvert.SerializeObject(urunler.UrunKodlari);
 
-			SqlCommand cmd = new SqlCommand($"update Urunler set Urun='{urunler.Urun}', UrunKodlari='{jsonString}' where id='{urunId}'", con);
-			cmd.ExecuteNonQuery();
-
+			try
+			{
+				SqlCommand cmd = new SqlCommand($"update Urunler set Urun='{urunler.Urun}', UrunKodlari='{jsonString}' where id='{urunId}'", con);
+				cmd.ExecuteNonQuery();
+			}
+			catch(Exception ex)
+			{
+				con.Close();
+				return Json(new { success = false, responseText = "Ürün düzenlenirken bir hata meydana geldi!" });
+			}
 			con.Close();
-
-			return View();
+			return Json(new { success = true, responseText = "Ürün başarılı bir şekilde düzenlendi!" });
 		}
 
 		[HttpGet]
@@ -293,7 +308,7 @@ namespace MifaUretim.Controllers
 				SqlCommand cmd3 = new SqlCommand($"update Urunler set Miktar = Miktar + {urunQuantity} where id='{urunId}'", con);
 				cmd3.ExecuteNonQuery();
 				con.Close();
-				return Json(new { success = true, responseText = "Ürün başarılı bir şekilde oluşturuldu!" });
+				return Json(new { success = true, responseText = "Üretim başarılı bir şekilde yapıldı!" });
 
 			}
 			else

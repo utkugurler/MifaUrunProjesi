@@ -75,23 +75,30 @@ namespace MifaUretim.Controllers
 		}
 
         [HttpPost]
-        public IActionResult HammaddeDuzenle(Hammaddeler hammaddeler)
+        public JsonResult HammaddeDuzenle(Hammaddeler hammaddeler)
 		{
             if (hammaddeler.Hammadde == null)
 			{
-
-			}
-			else
+                return Json(new { success = false, responseText = "Hammadde adı boş!" });
+            }
+            else
 			{
                 if (con.State != System.Data.ConnectionState.Open)
                 {
                     con.Open();
                 }
-                SqlCommand cmd = new SqlCommand($"update Hammaddeler set Hammadde='{hammaddeler.Hammadde}', Stok='{hammaddeler.Stok}' where id = '{hammaddeler.Id}'", con);
-                cmd.ExecuteNonQuery();
-                con.Close();
+				try
+				{
+                    SqlCommand cmd = new SqlCommand($"update Hammaddeler set Hammadde='{hammaddeler.Hammadde}', Stok='{hammaddeler.Stok}' where id = '{hammaddeler.Id}'", con);
+                    cmd.ExecuteNonQuery();
+                    return Json(new { success = true, responseText = "Hammadde başarılı bir şekilde oluşturuldu!" });
+                }
+                catch (Exception ex)
+				{
+                    con.Close();
+                    return Json(new { success = false, responseText = "Hammadde düzenlenirken bir hata meydana geldi!" });
+                }
             }
-            return RedirectToAction("Index");
         }
 
         [HttpGet]
@@ -113,17 +120,26 @@ namespace MifaUretim.Controllers
 		}
 
         [HttpPost]
-        public IActionResult YeniHammadde(Hammaddeler hammaddeler)
+        public JsonResult YeniHammadde(Hammaddeler hammaddeler)
         {
             if (con.State != System.Data.ConnectionState.Open)
             {
                 con.Open();
             }
 
-            SqlCommand cmd = new SqlCommand($"insert into Hammaddeler(Hammadde, Stok) values('{hammaddeler.Hammadde}', '{hammaddeler.Stok}')", con);
-            cmd.ExecuteNonQuery();
+			try
+			{
+                SqlCommand cmd = new SqlCommand($"insert into Hammaddeler(Hammadde, Stok) values('{hammaddeler.Hammadde}', '{hammaddeler.Stok}')", con);
+                cmd.ExecuteNonQuery();
+            }
+            catch(Exception ex)
+			{
+                con.Close();
+                return Json(new { success = false, responseText = "Hammadde oluşturulurken bir hata meydana geldi!" });
+            }
+
             con.Close();
-            return View();
+            return Json(new { success = true, responseText = "Hammadde başarılı bir şekilde oluşturuldu!" });
         }
 
     }

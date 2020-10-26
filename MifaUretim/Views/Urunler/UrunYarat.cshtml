@@ -4,48 +4,57 @@
 </head>
 <body>
     <div class="input-group input-group-lg">
-        <input type="text" value="" id="urunAdi" name="city" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="ÜRÜN ADINI YAZ">
+        <input type="text" value="" id="urunAdi" name="city" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Ürün Adını Yazınız">
     </div>
+    <br />
         @{
             foreach (var item in ViewBag.hammaddeler)
             {
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="@item.Id" id="@item.Id" name="myCheckboxes">
-                    <label class="form-check-label" for="defaultCheck1">
-                        @item.Hammadde
-                    </label>
-                </div>
-                <input type="number" value="0" id="text-@item.Id" name="city" class="form-control col-sm-4" placeholder="Kaç adet?">
-
-
-
-                @*<div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-                    <label class="form-check-label" for="defaultCheck1">
-                        Default checkbox
-                    </label>
-                </div>*@
-                @*<div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled>
-                    <label class="form-check-label" for="defaultCheck2">
-                        Disabled checkbox
-                    </label>
-                </div>*@
-            }
-        }
-
-        <div class="form-group">
-            <div>
-                <div class="form-inline">
-                    <div class="form-group ">
-                        <div>
-                            <input type="button" class="btn btn-success" value="Üret" id="btnsubmit">
+            <div class="form-check">
+                <div class="form-group">
+                    <div class="form-inline">
+                        <div class="col-form-label col-4">
+                            <label  for="defaultCheck1" class="col-1">
+                                @item.Hammadde:
+                            </label>
                         </div>
+                           
+                        <input type="number" value="0" id="@item.Id" name="quantNumber" class="form-control col-4" placeholder="Kaç adet?" min="0">
                     </div>
                 </div>
-            </div>
-        </div>
-  
+                               
+
+                            </div>
+
+
+
+                            @*<div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                        <label class="form-check-label" for="defaultCheck1">
+                            Default checkbox
+                        </label>
+                    </div>*@
+                            @*<div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled>
+                        <label class="form-check-label" for="defaultCheck2">
+                            Disabled checkbox
+                        </label>
+                    </div>*@
+                            }
+                            }
+
+                            <div class="form-group">
+                                <div>
+                                    <div class="form-inline">
+                                        <div class="form-group ">
+                                            <div>
+                                                <input type="button" class="btn btn-success" value="Üret" id="btnsubmit">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
 </body>
 </html>
 
@@ -61,15 +70,31 @@
             //alert("My favourite sports are: " + checkId);
 
 
+
+
             var array = [];
             var checkId = [];
-            $.each($("input[name='myCheckboxes']:checked"), function () {
-                // checkId.push($(this).val());
-                array.push({
-                    id: $(this).val(),
-                    quantity: $("#text-" + $(this).val()).val(),
-                });
+
+            $("input[name='quantNumber']").each(function () {
+                //alert($(this).val());
+               
+                if ($(this).val() > 0) {
+                    array.push({
+                        id: $(this).attr("id"),
+                        quantity: $(this).val(),
+                    })
+                }
             });
+            //var jsonString = JSON.stringify(array);
+            //alert(jsonString);
+
+            //$.each($("input[name='myCheckboxes']:checked"), function () {
+            //    // checkId.push($(this).val());
+            //    array.push({
+            //        id: $(this).val(),
+            //        quantity: $("#text-" + $(this).val()).val(),
+            //    });
+            //});
 
             //var jsonString = JSON.stringify(array);
             //alert(jsonString);
@@ -83,21 +108,34 @@
                 Miktar: 0,
                 UrunKodlari: array,
             }
+            if ($("#urunAdi").val() == false) {
+                alert("Lütfen ürün adını giriniz")
+            }
+            else if (array.length == 0) {
+                alert("Lütfen hammadde seçimi yapınız!");
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    url: "/Urunler/UrunYarat",
+                    data: urunler,
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.responseText);
+                            location.href = "/Urunler/Index";
+                        } else {
+                            // DoSomethingElse()
+                            alert(response.responseText);
+                        }
+                    },
+                    error: function (response) {
+                        alert(response.responseText);  // 
 
-            alert(urunler.Urun);
-
-            $.ajax({
-                type: "POST",
-                url: "/Urunler/UrunYarat",
-                data: urunler,
-                dataType: "json",
-                success: function (result) {
-                    // Result.
-                },
-                error: function () {
-                    //do your own thing
-                }
-            });
+                    }
+                });
+            }
+            
 
 
             //$.ajax({

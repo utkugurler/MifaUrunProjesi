@@ -12,15 +12,27 @@
 
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
+
+  
+
 </head>
 <body>
-    
-    <a href="/Urunler/UrunYarat" class="btn btn-success btn-lg float-lg-right">Ürün Yarat</a>
+    <div class="row">
+        <div class="col-sm-3">
+            <input class="form-control mr-sm-1" type="search" aria-label="Search" id="myInput" onkeyup="myFunction()" placeholder="Ürün ara...">
+        </div>
+        <div class="col">
+            <a href="/Urunler/UrunYarat" class="btn btn-success btn-lg float-lg-right">Ürün Yarat</a>
 
-    <table class="table table-striped">
+        </div>
+    </div>
+    
+    
+
+    <table class="table table-striped" id="myTable">
         <thead>
             <tr>
-                <th scope="col">ID</th>
+                <th scope="col">No</th>
                 <th scope="col">Urun</th>
                 <th scope="col">Miktar</th>
                 <th scope="col">Düzenle</th>
@@ -31,11 +43,12 @@
         <tbody>
 
             @{
+                int count = 1;
                 foreach (var item in ViewBag.urunler)
                 {
 
                     <tr>
-                        <th scope="row" id="btnId">@item.Id</th>
+                        <th scope="row" id="btnId">@count</th>
                         <td>@item.Urun</td>
                         <td>@item.Miktar</td>
                         <td>
@@ -43,7 +56,7 @@
                             <button onclick="location.href = '/Urunler/UrunDuzenle?id=@item.Id';" type="submit" id="btnEdit" class="btn btn-warning">Ürün Düzenle</button>
                         </td>
                     </tr>
-
+                    count++;
                 }
 
             }
@@ -52,3 +65,27 @@
 
 </body>
 </html>
+<script>
+    function myFunction() {
+        // Declare variables
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>
+

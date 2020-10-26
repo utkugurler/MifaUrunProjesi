@@ -19,7 +19,7 @@
     <div class="form-group row">
         <label for="text" class="col-sm-2 col-form-label">Stok Miktarı</label>
         <div class="col-sm-10">
-            <input type="number" class="form-control" id="Stok" placeholder="Stok Miktarı">
+            <input type="number" class="form-control" id="Stok" placeholder="Stok Miktarı" min="0" value="0">
         </div>
     </div>
     <div class="form-group row">
@@ -40,17 +40,29 @@
                 Stok: $("#Stok").val(),
             }
 
-
+            if ($("#Hammadde").val() == false) {
+                alert("Lütfen hammadde adını giriniz!");
+            }
+            else if ($("#Stok").val() < 0) {
+                alert("Lütfen stok sayısını 0 veya daha yüksek giriniz!")
+            }
             $.ajax({
                 type: "POST",
                 url: "/Hammaddeler/YeniHammadde",
                 data: hammaddeler,
                 dataType: "json",
-                success: function (result) {
-                    // Result.  
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.responseText);
+                        location.href = "/Hammaddeler/Index";
+                    } else {
+                        // DoSomethingElse()
+                        alert(response.responseText);
+                    }
                 },
-                error: function () {
-                    //do your own thing  
+                error: function (response) {
+                    alert(response.responseText);  // 
+
                 }
             });  
            // alert(hammaddeler.Hammadde);
